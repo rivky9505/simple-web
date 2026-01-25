@@ -1,0 +1,129 @@
+# Default values for simple-web application
+# This is a YAML-formatted file.
+
+# Application configuration
+app:
+  name: simple-web
+  namespace: rivkak  # Replace with actual interviewer name
+
+# Image configuration
+image:
+  registry: acrinterview.azurecr.io
+  repository: simple-web
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Replica configuration
+replicaCount: 2
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  annotations: {}
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: nginx  # or azure-application-gateway depending on cluster setup
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # For production, add these:
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: ""  # Will use cluster's public IP
+      paths:
+        - path: /rivka
+          pathType: Prefix
+  tls: []
+  # Uncomment for TLS:
+  # tls:
+  #   - secretName: simple-web-tls
+  #     hosts:
+  #       - your-domain.com
+
+# KEDA Autoscaling configuration
+autoscaling:
+  enabled: true
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  
+  # CPU-based scaling
+  cpu:
+    enabled: true
+    targetAverageUtilization: 70
+  
+  # Memory-based scaling
+  memory:
+    enabled: true
+    targetAverageUtilization: 80
+  
+  # Schedule-based scaling (8:00 AM - 12:00 PM)
+  schedule:
+    enabled: true
+    timezone: "Asia/Jerusalem"  # Adjust to your timezone
+    # Scale up at 8:00 AM
+    scaleUp:
+      desiredReplicas: 5
+      start: "0 8 * * *"  # Cron format: minute hour day month weekday
+      end: "0 12 * * *"   # End at 12:00 PM
+    # Scale down after hours
+    scaleDown:
+      desiredReplicas: 2
+      start: "0 12 * * *"
+      end: "0 8 * * *"
+
+# Health check configuration
+healthCheck:
+  liveness:
+    enabled: true
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /ready
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+# Pod disruption budget for high availability
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Monitoring and observability
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: false  # Set to true if Prometheus Operator is installed
+    interval: 30s
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/metrics"

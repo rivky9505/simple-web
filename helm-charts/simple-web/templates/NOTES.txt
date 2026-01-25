@@ -1,0 +1,67 @@
+🎉 Thank you for installing {{ .Chart.Name }}!
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }} -n {{ .Values.app.namespace }}
+  $ helm get all {{ .Release.Name }} -n {{ .Values.app.namespace }}
+
+📊 Deployment Information:
+---------------------------
+Application: {{ include "simple-web.fullname" . }}
+Namespace: {{ .Values.app.namespace }}
+Image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+
+{{- if .Values.ingress.enabled }}
+
+🌐 Accessing the Application:
+------------------------------
+{{- range .Values.ingress.hosts }}
+  {{- range .paths }}
+  http://{{ if .host }}{{ .host }}{{ else }}<CLUSTER-IP>{{ end }}{{ .path }}
+  {{- end }}
+{{- end }}
+
+To get the Ingress IP address:
+  kubectl get ingress {{ include "simple-web.fullname" . }} -n {{ .Values.app.namespace }}
+
+{{- end }}
+
+{{- if .Values.autoscaling.enabled }}
+
+⚡ KEDA Autoscaling:
+--------------------
+Enabled: Yes
+Min Replicas: {{ .Values.autoscaling.minReplicaCount }}
+Max Replicas: {{ .Values.autoscaling.maxReplicaCount }}
+{{- if .Values.autoscaling.cpu.enabled }}
+CPU Target: {{ .Values.autoscaling.cpu.targetAverageUtilization }}%
+{{- end }}
+{{- if .Values.autoscaling.memory.enabled }}
+Memory Target: {{ .Values.autoscaling.memory.targetAverageUtilization }}%
+{{- end }}
+{{- if .Values.autoscaling.schedule.enabled }}
+Schedule: Scale up at 8:00 AM to {{ .Values.autoscaling.schedule.scaleUp.desiredReplicas }} replicas
+{{- end }}
+
+To check the ScaledObject status:
+  kubectl get scaledobject {{ include "simple-web.fullname" . }} -n {{ .Values.app.namespace }}
+
+{{- end }}
+
+📝 Useful Commands:
+-------------------
+# Watch pods
+kubectl get pods -n {{ .Values.app.namespace }} -w
+
+# View logs
+kubectl logs -f deployment/{{ include "simple-web.fullname" . }} -n {{ .Values.app.namespace }}
+
+# Describe deployment
+kubectl describe deployment {{ include "simple-web.fullname" . }} -n {{ .Values.app.namespace }}
+
+# Port forward for local testing
+kubectl port-forward svc/{{ include "simple-web.fullname" . }} 8080:{{ .Values.service.port }} -n {{ .Values.app.namespace }}
+
+Happy deploying! 🚀

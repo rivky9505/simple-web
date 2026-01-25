@@ -1,0 +1,13 @@
+apiVersion: v2
+name: simple-web
+description: A Helm chart for simple-web application with Ingress and KEDA autoscaling
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - web
+  - autoscaling
+  - keda
+maintainers:
+  - name: DevOps Engineer
+    email: devops@example.com

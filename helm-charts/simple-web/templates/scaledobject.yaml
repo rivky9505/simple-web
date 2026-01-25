@@ -1,0 +1,40 @@
+{{- if .Values.autoscaling.enabled -}}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "simple-web.fullname" . }}
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    {{- include "simple-web.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    name: {{ include "simple-web.fullname" . }}
+  minReplicaCount: {{ .Values.autoscaling.minReplicaCount }}
+  maxReplicaCount: {{ .Values.autoscaling.maxReplicaCount }}
+  pollingInterval: 30
+  cooldownPeriod: 300
+  triggers:
+  {{- if .Values.autoscaling.cpu.enabled }}
+  # CPU-based scaling trigger
+  - type: cpu
+    metricType: Utilization
+    metadata:
+      value: "{{ .Values.autoscaling.cpu.targetAverageUtilization }}"
+  {{- end }}
+  {{- if .Values.autoscaling.memory.enabled }}
+  # Memory-based scaling trigger
+  - type: memory
+    metricType: Utilization
+    metadata:
+      value: "{{ .Values.autoscaling.memory.targetAverageUtilization }}"
+  {{- end }}
+  {{- if .Values.autoscaling.schedule.enabled }}
+  # Schedule-based scaling (8:00 AM - 12:00 PM scale up)
+  - type: cron
+    metadata:
+      timezone: {{ .Values.autoscaling.schedule.timezone }}
+      start: {{ .Values.autoscaling.schedule.scaleUp.start | quote }}
+      end: {{ .Values.autoscaling.schedule.scaleUp.end | quote }}
+      desiredReplicas: "{{ .Values.autoscaling.schedule.scaleUp.desiredReplicas }}"
+  {{- end }}
+{{- end }}
