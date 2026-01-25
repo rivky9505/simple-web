@@ -22,10 +22,12 @@ spec:
       labels:
         {{- include "simple-web.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.securityContext.runAsNonRoot }}
       securityContext:
         runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
         runAsUser: {{ .Values.securityContext.runAsUser }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -56,10 +58,12 @@ spec:
         {{- end }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.securityContext.readOnlyRootFilesystem }}
         securityContext:
           capabilities:
             {{- toYaml .Values.securityContext.capabilities | nindent 12 }}
           readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem }}
+        {{- end }}
         env:
         - name: PORT
           value: "{{ .Values.service.targetPort }}"
