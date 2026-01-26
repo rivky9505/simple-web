@@ -215,7 +215,7 @@ pipeline {
                 }
             }
         }
-          stage('Deploy / Upgrade') {
+        stage('Deploy / Upgrade') {
             when {
                 expression { params.ACTION in ['deploy', 'upgrade'] }
             }
@@ -276,7 +276,7 @@ pipeline {
                 }
             }
         }
-          stage('Wait for Deployment') {
+        stage('Wait for Deployment') {
             when {
                 expression { 
                     params.ACTION in ['deploy', 'upgrade'] && params.WAIT_FOR_READY 
@@ -299,7 +299,7 @@ pipeline {
                 }
             }
         }
-          stage('Smoke Tests') {
+        stage('Smoke Tests') {
             when {
                 expression { 
                     params.ACTION in ['deploy', 'upgrade'] && params.RUN_TESTS 
@@ -386,7 +386,7 @@ pipeline {
                     // Add confirmation for production
                     if (params.ENVIRONMENT == 'production') {
                         input message: 'Are you sure you want to destroy the production deployment?', 
-                              ok: 'Yes, destroy it!'
+                              ok: 'Yes'
                     }
                     
                     sh """
@@ -434,8 +434,9 @@ pipeline {
                         kubectl get ingress -n ${NAMESPACE} -l app.kubernetes.io/instance=${RELEASE_NAME}
                         
                         # KEDA ScaledObject (if exists)
-                        echo "\\nKEDA ScaledObject:"
-                        kubectl get scaledobject -n ${NAMESPACE} -l app.kubernetes.io/instance=${RELEASE_NAME} || echo "No ScaledObject found"                        echo "=========================================="
+                        echo "\\nKEDA ScaledObject:"                        kubectl get scaledobject -n ${NAMESPACE} -l app.kubernetes.io/instance=${RELEASE_NAME} || echo "No ScaledObject found"
+                        
+                        echo "=========================================="
                         echo "Access the application:"
                         # Get the ingress controller external IP
                         INGRESS_IP=\$(kubectl get svc nginx-ingress-controller -n ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
@@ -448,9 +449,10 @@ pipeline {
                         echo "=========================================="
                     """
                 }
-            }
-        }
-    }    post {
+            }        }
+    }
+    
+    post {
         success {
             script {
                 echo "✓ Pipeline completed successfully!"
