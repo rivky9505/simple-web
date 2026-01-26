@@ -1,19 +1,19 @@
 # DevOps Interview Task Submission
 
 ## 📍 Repository
-- **GitHub URL**: https://github.com/YOUR_USERNAME/devops-interview-task
-- **Branch**: main
-- **Last Updated**: [DATE]
+- **GitHub URL**: https://github.com/rivky9505/simple-web
+- **Branch**: master
+- **Last Updated**: January 26, 2026
 
 ## 🔐 Jenkins Access
 - **URL**: http://108.143.33.48:8080
-- **Username**: admin
-- **Password**: [YOUR_JENKINS_PASSWORD]
+- **Username**: rivkak
+- **Password**: *[provided separately]*
 - **Pipeline Name**: simple-web-deploy
 
 ## 🌐 Application Access
-- **Application URL**: http://[INGRESS_IP]/rivka
-- **Kubernetes Namespace**: [YOUR_NAMESPACE]
+- **Application URL**: http://9.163.150.227/rivka
+- **Kubernetes Namespace**: rivkak
 - **AKS Cluster**: devops-interview-aks
 - **Resource Group**: devops-interview-rg
 

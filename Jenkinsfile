@@ -23,7 +23,7 @@ properties([
         ),
         string(
             name: 'NAMESPACE',
-            defaultValue: 'rivka',
+            defaultValue: 'rivkak',
             description: 'Kubernetes namespace (use interviewer name)'
         ),
         string(
@@ -77,7 +77,7 @@ pipeline {
         KUBECONFIG = "${HOME}/.kube/config"
         
         // Git Configuration
-        GIT_REPO = 'https://github.com/YOUR_USERNAME/devops-interview-task.git'
+        GIT_REPO = 'https://github.com/rivky9505/simple-web.git'
         
         // Container Registry
         ACR_REGISTRY = 'acrinterview.azurecr.io'
