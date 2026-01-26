@@ -1,0 +1,90 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.alerts.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "simple-web.fullname" . }}
+  labels:
+    {{- include "simple-web.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.alerts.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  groups:
+    - name: {{ include "simple-web.fullname" . }}.rules
+      rules:
+        # High Error Rate Alert
+        - alert: SimpleWebHighErrorRate
+          expr: |
+            sum(rate(http_requests_total{job="{{ include "simple-web.fullname" . }}", status=~"5.."}[5m])) 
+            / sum(rate(http_requests_total{job="{{ include "simple-web.fullname" . }}"}[5m])) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+            app: {{ include "simple-web.fullname" . }}
+          annotations:
+            summary: "High error rate detected"
+            description: "Error rate is above 5% for the last 5 minutes (current: {{ "{{ $value | humanizePercentage }}" }})"
+
+        # Pod Not Ready Alert
+        - alert: SimpleWebPodNotReady
+          expr: |
+            kube_pod_status_ready{namespace="{{ .Release.Namespace }}", pod=~"{{ include "simple-web.fullname" . }}.*", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+            app: {{ include "simple-web.fullname" . }}
+          annotations:
+            summary: "Pod not ready"
+            description: "Pod {{ "{{ $labels.pod }}" }} has been not ready for more than 5 minutes"
+
+        # High Memory Usage Alert
+        - alert: SimpleWebHighMemoryUsage
+          expr: |
+            container_memory_usage_bytes{namespace="{{ .Release.Namespace }}", container="{{ .Chart.Name }}"} 
+            / container_spec_memory_limit_bytes{namespace="{{ .Release.Namespace }}", container="{{ .Chart.Name }}"} > 0.9
+          for: 5m
+          labels:
+            severity: warning
+            app: {{ include "simple-web.fullname" . }}
+          annotations:
+            summary: "High memory usage"
+            description: "Memory usage is above 90% (current: {{ "{{ $value | humanizePercentage }}" }})"
+
+        # High CPU Usage Alert
+        - alert: SimpleWebHighCPUUsage
+          expr: |
+            rate(container_cpu_usage_seconds_total{namespace="{{ .Release.Namespace }}", container="{{ .Chart.Name }}"}[5m]) 
+            / container_spec_cpu_quota{namespace="{{ .Release.Namespace }}", container="{{ .Chart.Name }}"} * 100000 > 0.9
+          for: 5m
+          labels:
+            severity: warning
+            app: {{ include "simple-web.fullname" . }}
+          annotations:
+            summary: "High CPU usage"
+            description: "CPU usage is above 90% (current: {{ "{{ $value | humanizePercentage }}" }})"
+
+        # Pod Restart Alert
+        - alert: SimpleWebPodRestarting
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}", pod=~"{{ include "simple-web.fullname" . }}.*"}[1h]) > 3
+          for: 5m
+          labels:
+            severity: warning
+            app: {{ include "simple-web.fullname" . }}
+          annotations:
+            summary: "Pod restarting frequently"
+            description: "Pod {{ "{{ $labels.pod }}" }} has restarted {{ "{{ $value }}" }} times in the last hour"
+
+        # Deployment Replicas Mismatch
+        - alert: SimpleWebReplicasMismatch
+          expr: |
+            kube_deployment_spec_replicas{namespace="{{ .Release.Namespace }}", deployment="{{ include "simple-web.fullname" . }}"} 
+            != kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment="{{ include "simple-web.fullname" . }}"}
+          for: 10m
+          labels:
+            severity: critical
+            app: {{ include "simple-web.fullname" . }}
+          annotations:
+            summary: "Deployment replicas mismatch"
+            description: "Deployment {{ include "simple-web.fullname" . }} has not matched the expected number of replicas for more than 10 minutes"
+{{- end }}

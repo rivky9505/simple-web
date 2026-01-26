@@ -119,11 +119,64 @@ podDisruptionBudget:
 
 # Monitoring and observability
 monitoring:
-  enabled: true
-  serviceMonitor:
-    enabled: false  # Set to true if Prometheus Operator is installed
-    interval: 30s
+  enabled: false  # Disabled - cluster doesn't have Prometheus Operator installed
+  # NOTE: Templates are ready for when Prometheus Operator is installed
+  # To enable: set enabled: true and ensure Prometheus Operator CRDs exist
+  # Prometheus ServiceMonitor (requires Prometheus Operator)
+  path: /metrics
+  interval: 30s
+  scrapeTimeout: 10s
+  labels: {}  # Additional labels for ServiceMonitor
+  
+  # Prometheus alerting rules
+  alerts:
+    enabled: true
+    labels:
+      release: prometheus  # Must match Prometheus Operator's label selector
+  
+  # Grafana dashboard auto-import
+  dashboard:
+    enabled: true
+  
+  # Pod annotations for Prometheus scraping (fallback if ServiceMonitor not available)
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "8080"
+    prometheus.io/port: "80"
     prometheus.io/path: "/metrics"
+
+# Network Policy for security isolation
+networkPolicy:
+  enabled: false  # Disabled - AKS cluster has networkPolicy: none
+  # NOTE: To enable, AKS must be configured with Azure CNI + Calico or Azure Network Policy
+  # Templates are ready for when Network Policies are enabled on the cluster
+  # Allows:
+  # - Ingress from ingress controller namespace
+  # - Ingress from same namespace
+  # - Ingress from Prometheus for metrics scraping
+  # - Egress for DNS resolution
+  # - Egress for HTTPS to external APIs
+
+# Pod labels and annotations
+podLabels: {}
+podAnnotations: {}
+
+# Node selector for pod scheduling
+nodeSelector: {}
+
+# Tolerations for pod scheduling
+tolerations: []
+
+# Affinity rules for pod scheduling
+affinity: {}
+  # Example: spread pods across availability zones
+  # podAntiAffinity:
+  #   preferredDuringSchedulingIgnoredDuringExecution:
+  #     - weight: 100
+  #       podAffinityTerm:
+  #         labelSelector:
+  #           matchExpressions:
+  #             - key: app.kubernetes.io/name
+  #               operator: In
+  #               values:
+  #                 - simple-web
+  #         topologyKey: topology.kubernetes.io/zone
