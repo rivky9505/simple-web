@@ -56,7 +56,7 @@ ingress:
 
 # KEDA Autoscaling configuration
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicaCount: 2
   maxReplicaCount: 10
   
