@@ -276,8 +276,7 @@ pipeline {
                 }
             }
         }
-        
-        stage('Wait for Deployment') {
+          stage('Wait for Deployment') {
             when {
                 expression { 
                     params.ACTION in ['deploy', 'upgrade'] && params.WAIT_FOR_READY 
@@ -288,7 +287,7 @@ pipeline {
                     echo "Waiting for deployment to be ready..."
                     sh """
                         # Wait for deployment to be ready
-                        kubectl rollout status deployment/${RELEASE_NAME}-simple-web \
+                        kubectl rollout status deployment/${RELEASE_NAME} \
                             -n ${NAMESPACE} \
                             --timeout=${DEPLOY_TIMEOUT}
                         
@@ -308,11 +307,10 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    echo "Running smoke tests..."
+                script {                    echo "Running smoke tests..."
                     sh """
                         # Get service endpoint
-                        INGRESS_IP=\$(kubectl get ingress ${RELEASE_NAME}-simple-web \
+                        INGRESS_IP=\$(kubectl get ingress ${RELEASE_NAME} \
                             -n ${NAMESPACE} \
                             -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
                         
@@ -442,10 +440,9 @@ pipeline {
                         # KEDA ScaledObject (if exists)
                         echo "\\nKEDA ScaledObject:"
                         kubectl get scaledobject -n ${NAMESPACE} -l app.kubernetes.io/instance=${RELEASE_NAME} || echo "No ScaledObject found"
-                        
-                        echo "=========================================="
+                          echo "=========================================="
                         echo "Access the application:"
-                        INGRESS_IP=\$(kubectl get ingress ${RELEASE_NAME}-simple-web -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
+                        INGRESS_IP=\$(kubectl get ingress ${RELEASE_NAME} -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
                         
                         if [ -n "\${INGRESS_IP}" ] && [ "\${INGRESS_IP}" != "pending" ]; then
                             echo "URL: http://\${INGRESS_IP}/rivka"
