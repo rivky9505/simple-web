@@ -119,8 +119,7 @@ pipeline {
             steps {
                 script {
                     echo "Validating required tools and configurations..."
-                    
-                    // Check required tools
+                      // Check required tools
                     sh '''
                         echo "Checking required tools..."
                         command -v az >/dev/null 2>&1 || { echo "az CLI not found"; exit 1; }
@@ -130,7 +129,7 @@ pipeline {
                         
                         echo "Tool versions:"
                         az --version | head -n 1
-                        kubectl version --client --short
+                        kubectl version --client -o yaml | head -n 5
                         helm version --short
                     '''
                 }
@@ -464,8 +463,7 @@ pipeline {
             }
         }
     }
-    
-    post {
+      post {
         success {
             script {
                 echo "✓ Pipeline completed successfully!"
@@ -483,8 +481,8 @@ pipeline {
                 // Capture logs for debugging
                 sh """
                     echo "Capturing debug information..."
-                    kubectl describe deployment ${RELEASE_NAME}-simple-web -n ${NAMESPACE} || true
-                    kubectl get events -n ${NAMESPACE} --sort-by='.lastTimestamp' | tail -n 20 || true
+                    kubectl describe deployment simple-web -n rivkak 2>/dev/null || true
+                    kubectl get events -n rivkak --sort-by='.lastTimestamp' 2>/dev/null | tail -n 20 || true
                 """
             }
         }
@@ -496,8 +494,8 @@ pipeline {
                 sh """
                     # Save deployment manifests
                     mkdir -p artifacts
-                    helm get manifest ${RELEASE_NAME} -n ${NAMESPACE} > artifacts/manifest.yaml 2>/dev/null || true
-                    helm get values ${RELEASE_NAME} -n ${NAMESPACE} > artifacts/values.yaml 2>/dev/null || true
+                    helm get manifest simple-web -n rivkak > artifacts/manifest.yaml 2>/dev/null || true
+                    helm get values simple-web -n rivkak > artifacts/values.yaml 2>/dev/null || true
                 """
                 
                 archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
