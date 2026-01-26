@@ -29,11 +29,11 @@ jobs:
       - name: Run script with defaults
         run: |
           python book_fetcher.py
-          test -f output/filtered_books.json
-          python -c "import json; d=json.load(open('output/filtered_books.json')); print(f'✓ Output: {d[\"metadata\"][\"total_books\"]} books')"
+          test -f filtered_books.json
+          python -c "import json; d=json.load(open('filtered_books.json')); assert isinstance(d, list); print('Output items:', len(d))"
 
       - name: Upload output artifact
         uses: actions/upload-artifact@v4
         with:
           name: filtered-books
-          path: python-book-fetcher/output/filtered_books.json
+          path: python-book-fetcher/filtered_books.json
