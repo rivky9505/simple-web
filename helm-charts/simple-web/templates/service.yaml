@@ -18,3 +18,7 @@ spec:
       name: http
   selector:
     {{- include "simple-web.selectorLabels" . | nindent 4 }}
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800

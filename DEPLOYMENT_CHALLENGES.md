@@ -251,6 +251,97 @@ curl http://<EXTERNAL-IP>/rivka
 
 ---
 
+## Challenge 9: Load Balancing Behavior - Local vs External Access
+
+### Issue
+When testing via SSH tunnel + port-forward (`localhost:8888`), all requests went to a single pod (10.224.0.120). However, when testing via external IP, requests were distributed between both pods.
+
+### Root Cause: Port-Forward Limitation
+The `kubectl port-forward` command establishes a **direct TCP connection to a single pod**:
+
+```bash
+kubectl port-forward -n rivkak svc/simple-web 8888:80
+```
+
+How it works:
+1. Resolves the service to find available backend pods
+2. **Selects ONE pod** and creates a persistent connection
+3. All traffic flows through this single connection to the same pod
+4. Completely **bypasses** Kubernetes Service load balancing
+
+### Demonstration
+Testing from VM using Service endpoint showed proper load balancing:
+```bash
+for i in {1..10}; do
+  kubectl exec -n rivkak deploy/simple-web -- curl -s http://simple-web.rivkak.svc.cluster.local/
+done
+```
+
+Results:
+- Pod `10.224.0.120` received 5 requests
+- Pod `10.224.0.165` received 5 requests
+- Kubernetes Service distributed traffic round-robin
+
+### Testing Methods Comparison
+
+| Method | Load Balancing | Use Case |
+|--------|---------------|----------|
+| `kubectl port-forward` | ❌ Single pod only | Local development/debugging |
+| Service ClusterIP | ✅ Round-robin | Internal cluster communication |
+| External Ingress IP | ✅ Through NGINX | Production external access |
+| SSH Tunnel | ❌ Single pod (uses port-forward) | Remote debugging |
+
+### External Access Verification
+Testing from laptop browser via public IP `http://9.163.150.227/rivka`:
+- Successfully reached both pods randomly
+- Pod `10.224.0.120` and `10.224.0.165` both responded
+- Ingress controller properly load balanced
+
+### Observed Application Behavior
+Each pod maintains **separate state files**:
+- `index.html` - Generated visit statistics
+- `pickle_data.txt` - Request tracking data
+
+**Result:** Each pod shows different statistics because they track their own requests independently.
+
+Example responses:
+- Pod 1 (10.224.0.120): "41 requests from localhost"
+- Pod 2 (10.224.0.165): "5 requests from 10-224-0-120.simple-web..."
+
+### Solution Path (Next Enhancement)
+To provide unified statistics across all pods, implement one of:
+
+1. **Shared Storage Approach:**
+   - Add PersistentVolume mounted to both pods
+   - Both pods read/write same files
+   - Requires file locking mechanism
+
+2. **Database Approach:**
+   - Replace pickle files with Redis or similar
+   - Centralized state storage
+   - Better for production
+
+3. **Session Affinity:**
+   - Configure `sessionAffinity: ClientIP` on Service
+   - Same client always hits same pod
+   - Maintains per-user consistency
+
+4. **Accept Current Behavior:**
+   - Document that statistics are per-pod
+   - Display pod IP in response
+   - Valid for stateless applications
+
+### Decision
+For this interview task, the current behavior **demonstrates proper load balancing**. Planning to enhance the application to show unified responses before final submission.
+
+### Lesson Learned
+- `kubectl port-forward` is for debugging, not load testing
+- Always test production scenarios using actual Ingress/LoadBalancer
+- Understand the difference between development and production traffic patterns
+- Stateful applications need shared storage or databases in multi-replica deployments
+
+---
+
 ## Remaining Tasks
 
 ### 1. Upload Helm Chart to GitHub

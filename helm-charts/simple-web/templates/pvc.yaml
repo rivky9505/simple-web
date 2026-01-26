@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "simple-web.fullname" . }}-code
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    {{- include "simple-web.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteMany  # Multiple pods can read/write
+  storageClassName: azurefile  # Azure Files supports ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
