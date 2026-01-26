@@ -299,42 +299,38 @@ pipeline {
                 }
             }
         }
-        
-        stage('Smoke Tests') {
+          stage('Smoke Tests') {
             when {
                 expression { 
                     params.ACTION in ['deploy', 'upgrade'] && params.RUN_TESTS 
                 }
             }
             steps {
-                script {                    echo "Running smoke tests..."
+                script {
+                    echo "Running smoke tests..."
                     sh """
-                        # Get service endpoint
-                        INGRESS_IP=\$(kubectl get ingress ${RELEASE_NAME} \
-                            -n ${NAMESPACE} \
-                            -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
+                        # Get the ingress controller external IP (not the ingress resource IP)
+                        INGRESS_IP=\$(kubectl get svc nginx-ingress-controller -n ingress \
+                            -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
                         
-                        echo "Ingress IP: \${INGRESS_IP}"
+                        echo "Ingress Controller External IP: \${INGRESS_IP}"
                         
-                        if [ "\${INGRESS_IP}" != "pending" ] && [ -n "\${INGRESS_IP}" ]; then
+                        if [ -n "\${INGRESS_IP}" ]; then
                             # Test the application endpoint
                             echo "Testing application at http://\${INGRESS_IP}/rivka"
                             
-                            # Wait for ingress to be ready
-                            sleep 30
-                            
-                            # Test with curl (with retries)
-                            for i in {1..5}; do
-                                if curl -f -s -o /dev/null -w "%{http_code}" "http://\${INGRESS_IP}/rivka" | grep -q "200\\|301\\|302"; then
+                            # Test with curl (with retries, shorter timeout)
+                            for i in 1 2 3; do
+                                HTTP_CODE=\$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 "http://\${INGRESS_IP}/rivka" || echo "000")
+                                echo "Attempt \$i: HTTP \${HTTP_CODE}"
+                                if echo "\${HTTP_CODE}" | grep -qE "^(200|301|302)\$"; then
                                     echo "✓ Smoke test passed"
                                     break
-                                else
-                                    echo "Attempt \$i failed, retrying..."
-                                    sleep 10
                                 fi
+                                sleep 5
                             done
                         else
-                            echo "⚠ Ingress IP not yet assigned, skipping HTTP test"
+                            echo "⚠ Ingress controller IP not found, skipping HTTP test"
                         fi
                         
                         # Verify pods are running
@@ -439,10 +435,10 @@ pipeline {
                         
                         # KEDA ScaledObject (if exists)
                         echo "\\nKEDA ScaledObject:"
-                        kubectl get scaledobject -n ${NAMESPACE} -l app.kubernetes.io/instance=${RELEASE_NAME} || echo "No ScaledObject found"
-                          echo "=========================================="
+                        kubectl get scaledobject -n ${NAMESPACE} -l app.kubernetes.io/instance=${RELEASE_NAME} || echo "No ScaledObject found"                        echo "=========================================="
                         echo "Access the application:"
-                        INGRESS_IP=\$(kubectl get ingress ${RELEASE_NAME} -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
+                        # Get the ingress controller external IP
+                        INGRESS_IP=\$(kubectl get svc nginx-ingress-controller -n ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
                         
                         if [ -n "\${INGRESS_IP}" ] && [ "\${INGRESS_IP}" != "pending" ]; then
                             echo "URL: http://\${INGRESS_IP}/rivka"
