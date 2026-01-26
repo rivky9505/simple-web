@@ -215,8 +215,7 @@ pipeline {
                 }
             }
         }
-        
-        stage('Deploy / Upgrade') {
+          stage('Deploy / Upgrade') {
             when {
                 expression { params.ACTION in ['deploy', 'upgrade'] }
             }
@@ -224,27 +223,23 @@ pipeline {
                 script {
                     echo "Deploying Helm chart..."
                     
-                    def helmCommand = params.ACTION == 'deploy' ? 'install' : 'upgrade'
-                    def additionalFlags = params.ACTION == 'upgrade' ? '--install' : ''
-                    
                     sh """
                         cd ${HELM_CHART_PATH}
                         
                         # Create namespace if it doesn't exist
-                        kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+                        kubectl create namespace ${NAMESPACE} 2>/dev/null || true
                         
-                        # Deploy/Upgrade with Helm
-                        helm ${helmCommand} ${RELEASE_NAME} . \
+                        # Deploy/Upgrade with Helm (use upgrade --install for idempotent deploys)
+                        helm upgrade ${RELEASE_NAME} . \
                             --namespace ${NAMESPACE} \
-                            ${additionalFlags} \
+                            --install \
                             --set image.tag=${IMAGE_TAG} \
                             --set replicaCount=${REPLICA_COUNT} \
                             --set autoscaling.enabled=${ENABLE_AUTOSCALING} \
                             --set app.namespace=${NAMESPACE} \
                             --timeout ${HELM_TIMEOUT} \
-                            --wait=${WAIT_FOR_READY} \
-                            --atomic \
-                            --cleanup-on-fail
+                            --wait \
+                            --atomic
                         
                         echo "✓ Deployment successful"
                         
