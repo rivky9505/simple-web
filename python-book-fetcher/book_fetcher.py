@@ -20,7 +20,7 @@ import logging
 from abc import ABC, abstractmethod
 
 import requests
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, field_validator
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 

@@ -10,9 +10,8 @@ This demonstrates testing best practices including:
 
 import pytest
 from datetime import datetime
-from pathlib import Path
 import json
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from book_fetcher import (
     Book,
