@@ -450,43 +450,22 @@ pipeline {
                 }
             }
         }
-    }
-      post {
+    }    post {
         success {
             script {
                 echo "✓ Pipeline completed successfully!"
-                // Add Slack/Email notification here
-                // slackSend(color: 'good', message: "Deployment successful: ${currentBuild.fullDisplayName}")
             }
         }
         
         failure {
             script {
                 echo "✗ Pipeline failed!"
-                // Add Slack/Email notification here
-                // slackSend(color: 'danger', message: "Deployment failed: ${currentBuild.fullDisplayName}")
-                
                 // Capture logs for debugging
                 sh """
                     echo "Capturing debug information..."
                     kubectl describe deployment simple-web -n rivkak 2>/dev/null || true
                     kubectl get events -n rivkak --sort-by='.lastTimestamp' 2>/dev/null | tail -n 20 || true
                 """
-            }
-        }
-        
-        always {
-            script {
-                echo "Cleaning up..."
-                // Archive artifacts
-                sh """
-                    # Save deployment manifests
-                    mkdir -p artifacts
-                    helm get manifest simple-web -n rivkak > artifacts/manifest.yaml 2>/dev/null || true
-                    helm get values simple-web -n rivkak > artifacts/values.yaml 2>/dev/null || true
-                """
-                
-                archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
             }
         }
     }
