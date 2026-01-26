@@ -18,7 +18,7 @@ cd d:\task
 # 3. Initialize git and push
 git init
 git add .
-git commit -m "Initial commit: DevOps interview task"
+git commit -m "Initial commit: DevOps deployment task"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/devops-interview-task.git
 git push -u origin main
@@ -56,7 +56,7 @@ kubelogin convert-kubeconfig -l msi
 kubectl cluster-info
 kubectl get nodes
 
-# Note: Replace "rivka" with your actual interviewer's name in the next steps
+# Note: Replace "rivka" with your actual your namespace in the next steps
 ```
 
 ## Step 4: Deploy Application (5 minutes)
@@ -68,31 +68,31 @@ cd devops-interview-task
 
 # IMPORTANT: Update the namespace
 # Edit helm-charts/simple-web/values.yaml
-# Change "namespace: rivka" to "namespace: YOUR_INTERVIEWER_NAME"
+# Change "namespace: rivka" to "namespace: YOUR_NAMESPACE"
 nano helm-charts/simple-web/values.yaml
 # or
 vim helm-charts/simple-web/values.yaml
 
 # Deploy with Helm
 helm install simple-web helm-charts/simple-web/ \
-  --namespace YOUR_INTERVIEWER_NAME \
+  --namespace YOUR_NAMESPACE \
   --create-namespace \
   --wait
 
 # Check deployment
-kubectl get all -n YOUR_INTERVIEWER_NAME
+kubectl get all -n YOUR_NAMESPACE
 ```
 
 ## Step 5: Get Application URL
 
 ```bash
 # Wait for Ingress IP (may take 2-5 minutes)
-kubectl get ingress -n YOUR_INTERVIEWER_NAME -w
+kubectl get ingress -n YOUR_NAMESPACE -w
 
 # Once you see an IP address, press Ctrl+C
 
 # Get the URL
-INGRESS_IP=$(kubectl get ingress simple-web-simple-web -n YOUR_INTERVIEWER_NAME -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+INGRESS_IP=$(kubectl get ingress simple-web-simple-web -n YOUR_NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 echo "Your application is at: http://$INGRESS_IP/rivka"
 
 # Test in browser or curl
@@ -172,7 +172,6 @@ For detailed information:
 - **Azure Guide**: [docs/AZURE_SETUP_GUIDE.md](docs/AZURE_SETUP_GUIDE.md)
 - **Commands**: [docs/COMMANDS.md](docs/COMMANDS.md)
 - **Complete Checklist**: [CHECKLIST.md](CHECKLIST.md)
-- **Interview Prep**: [docs/INTERVIEW_PREP.md](docs/INTERVIEW_PREP.md)
 
 ## 🎉 You're Done!
 
@@ -182,4 +181,3 @@ Your application is now running on Azure Kubernetes Service with:
 - ✅ Ingress routing
 - ✅ Production-ready configuration
 
-Prepare for your interview with [docs/INTERVIEW_PREP.md](docs/INTERVIEW_PREP.md)!

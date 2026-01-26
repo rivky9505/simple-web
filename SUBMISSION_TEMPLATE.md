@@ -1,4 +1,4 @@
-# DevOps Interview Task Submission
+# Simple Web Helm Deployment Submission
 
 ## 📍 Repository
 - **GitHub URL**: https://github.com/rivky9505/simple-web
@@ -111,7 +111,6 @@ devops-interview-task/
 ├── docs/
 │   ├── AZURE_SETUP_GUIDE.md     # Azure guide for AWS engineers
 │   ├── COMMANDS.md              # Command reference
-│   ├── INTERVIEW_PREP.md        # Interview preparation
 │   └── SENIOR_ENHANCEMENTS.md   # Advanced features guide
 ├── .github/
 │   └── workflows/
@@ -127,7 +126,7 @@ devops-interview-task/
 ### Task 1: Helm Chart & Deployment ✅
 - [x] Helm chart created for simple-web application
 - [x] Image: `acrinterview.azurecr.io/simple-web`
-- [x] Deployed to interviewer's namespace
+- [x] Deployed to designated namespace
 - [x] Ingress rule with path `/rivka`
 - [x] KEDA autoscaling configured:
   - [x] CPU metric
@@ -197,7 +196,7 @@ Beyond the basic requirements, I implemented:
 - Comprehensive README
 - Azure setup guide for AWS engineers
 - Command reference guide
-- Interview preparation guide
+- Documentation guide
 - Senior enhancements guide
 - Deployment checklist
 
@@ -292,7 +291,7 @@ kubectl get events -n YOUR_NAME --sort-by='.lastTimestamp'
 
 ## 🎤 Demo Script
 
-For the interview, I can demonstrate:
+For the project, I can demonstrate:
 
 1. **Architecture Overview** (5 min)
    - Draw architecture diagram

@@ -192,7 +192,7 @@ annotations:
 4. ✅ Provides consistent experience per client
 5. ✅ Aligns with current deployment requirements
 
-**Trade-off Accepted:** Statistics are per-user consistent but not globally unified. This is acceptable for a demo/interview application where each evaluator will have consistent results.
+**Trade-off Accepted:** Statistics are per-user consistent but not globally unified. This is acceptable for a demo application where each evaluator will have consistent results.
 
 ---
 

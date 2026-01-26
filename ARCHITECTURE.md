@@ -156,7 +156,7 @@
                ▼
 ┌──────────────────────────────┐
 │   AKS Cluster                │
-│   Namespace: <interviewer>   │
+│   Namespace: <your-namespace>   │
 │   - Deployment                │
 │   - Service                   │
 │   - Ingress                   │
@@ -450,4 +450,4 @@ These diagrams help visualize:
 - Deployment states
 - Autoscaling behavior
 
-Use them during your interview to explain your solution visually!
+Use them to explain your solution visually!

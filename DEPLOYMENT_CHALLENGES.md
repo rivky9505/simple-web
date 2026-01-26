@@ -332,7 +332,7 @@ To provide unified statistics across all pods, implement one of:
    - Valid for stateless applications
 
 ### Decision
-For this interview task, the current behavior **demonstrates proper load balancing**. Planning to enhance the application to show unified responses before final submission.
+For this task, the current behavior **demonstrates proper load balancing**. Planning to enhance the application to show unified responses before final submission.
 
 ### Lesson Learned
 - `kubectl port-forward` is for debugging, not load testing
@@ -385,7 +385,7 @@ For this interview task, the current behavior **demonstrates proper load balanci
 ## Architecture Decisions
 
 ### Why Disable Security Features?
-For this interview/demo environment, we prioritized getting the application running over security hardening. In production:
+For this demo environment, we prioritized getting the application running over security hardening. In production:
 - Work with security team to allow necessary permissions
 - Refactor application to run as non-root user on unprivileged port (>1024)
 - Use init containers to prepare writable directories with proper ownership

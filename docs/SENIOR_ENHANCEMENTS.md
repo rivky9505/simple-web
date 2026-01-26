@@ -594,7 +594,7 @@ This implementation includes several advanced features that demonstrate enterpri
 See `docs/SENIOR_ENHANCEMENTS.md` for detailed implementations.
 ```
 
-### In Your Interview
+### In Practice
 
 - "I went beyond the basic requirements to show production-ready thinking"
 - "Each enhancement addresses real challenges I've seen in production systems"

@@ -45,7 +45,6 @@ devops-interview-task/
 ├── 📚 docs/                          # Documentation
 │   ├── AZURE_SETUP_GUIDE.md          # Azure guide for AWS engineers
 │   ├── COMMANDS.md                   # Command reference
-│   ├── INTERVIEW_PREP.md             # Interview preparation
 │   └── SENIOR_ENHANCEMENTS.md        # Advanced features guide
 │
 ├── 🔄 .github/                       # GitHub Actions
@@ -222,8 +221,7 @@ Behavior:
    - Monitoring commands
    - Useful one-liners
 
-### Interview & Advanced
-6. **INTERVIEW_PREP.md**
+### Advanced
    - Key questions and answers
    - Technical talking points
    - Questions to ask
@@ -314,7 +312,7 @@ By completing this project, you demonstrate:
 ### ✅ Task 1: Helm Chart & Deployment
 - [x] Create Helm chart for simple-web
 - [x] Image from ACR: acrinterview.azurecr.io/simple-web
-- [x] Deploy to interviewer's namespace
+- [x] Deploy to designated namespace
 - [x] Ingress rule with path /rivka
 - [x] KEDA autoscaling:
   - [x] CPU metrics
@@ -344,7 +342,7 @@ By completing this project, you demonstrate:
 - [x] Automation scripts
 - [x] GitHub Actions CI
 - [x] Multiple test cases
-- [x] Interview preparation materials
+- [x] Documentation materials
 - [x] Advanced KEDA configuration
 - [x] Pod Disruption Budget
 - [x] Health checks
@@ -457,4 +455,4 @@ You have created a **comprehensive, production-ready DevOps solution** with:
 
 **This is a senior-level submission!** 🚀
 
-Good luck with your interview! Remember to speak confidently about your architectural decisions and demonstrate your understanding of production best practices.
+Good luck with deployment! Remember to speak confidently about your architectural decisions and demonstrate your understanding of production best practices.

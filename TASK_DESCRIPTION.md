@@ -1,8 +1,8 @@
-# DevOps Interview Task
+# DevOps Task - Simple Web Deployment
 
 ## Overview
 
-Following the last interview, this is the technical task assignment.
+This is a technical task assignment for deploying a simple web application.
 
 > If you encounter any issues, feel free to ask for help to release any blockers.
 
@@ -70,7 +70,7 @@ Create and deploy a helm chart for the following application:
 |----------|-------|
 | **Image** | simple-web |
 | **Registry** | acrinterview.azurecr.io |
-| **Namespace** | `<Interviewer Name>` (you will have permission to create resources only for this namespace) |
+| **Namespace** | `<Your Namespace>` (you will have permission to create resources only for this namespace) |
 
 **Requirements:**
 - ✅ Add the Helm chart to your own private GitHub repo
@@ -137,7 +137,6 @@ Implement code that:
 - Structure the code in a way that makes it easy to add additional output formats in the future
   - For example: separating the output logic, or designing a small formatter interface
 - **Note:** You only need to implement JSON output for this task
-
 ---
 
 ## 📤 Submission
@@ -145,18 +144,3 @@ Implement code that:
 Once finished, please send:
 1. ✅ Link to your GitHub repo
 2. ✅ Login credentials for accessing your created Jenkins
-
----
-
-## 📞 Contact
-
-If you have any questions or concerns, feel free to reach out.
-
----
-
-**Good luck!!!**
-
---  
-*Best Regards,*  
-*Omri Ziner | DevOps Engineer | omrizi@etoro.com*  
-*eToro - Your Social Investment Network*

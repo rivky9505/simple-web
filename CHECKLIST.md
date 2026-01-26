@@ -1,4 +1,4 @@
-# DevOps Interview Task - Deployment Checklist
+# Simple Web Helm Deployment - Deployment Checklist
 
 ## Pre-Deployment Checklist
 
@@ -11,7 +11,7 @@
 
 ### 2. Update Configuration Files
 - [ ] Update `helm-charts/simple-web/values.yaml`:
-  - [ ] Change `namespace: rivka` to your interviewer's name
+  - [ ] Change `namespace: rivka` to deploymenter's name
   - [ ] Verify image registry: `acrinterview.azurecr.io`
   - [ ] Verify image name: `simple-web`
 - [ ] Update `Jenkinsfile`:
@@ -229,7 +229,7 @@
 ### 23. Create Submission Document
 Create a file `SUBMISSION.md` with:
 ```markdown
-# DevOps Interview Task Submission
+# Simple Web Helm Deployment Submission
 
 ## Repository
 - GitHub URL: https://github.com/YOUR_USERNAME/devops-interview-task
@@ -266,14 +266,13 @@ Create a file `SUBMISSION.md` with:
 - [ ] Application working correctly
 - [ ] Documentation is clear
 - [ ] Code is clean and well-commented
-- [ ] Ready for interview presentation
+- [ ] Ready for presentation
 
 ## Troubleshooting
 
 If you encounter issues, refer to:
 - `docs/AZURE_SETUP_GUIDE.md` - Azure-specific help
 - `docs/COMMANDS.md` - Command reference
-- `docs/INTERVIEW_PREP.md` - Interview preparation
 
 Common issues:
 - **Pods not starting**: Check `kubectl describe pod POD_NAME -n YOUR_NAME`
@@ -295,4 +294,4 @@ Common issues:
 
 ---
 
-Good luck with your interview! 🚀
+Good luck with deployment! 🚀

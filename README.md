@@ -1,4 +1,4 @@
-# DevOps Interview Task - Complete Implementation
+# Simple Web Helm Deployment - Complete Implementation
 
 ![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)
 ![Helm](https://img.shields.io/badge/helm-0F1689?style=for-the-badge&logo=helm&logoColor=white)
@@ -151,7 +151,7 @@ cd devops-interview-task
 ### 6. Deploy with Helm
 
 ```bash
-# Update namespace in values.yaml (change 'rivka' to your interviewer's name)
+# Update namespace in values.yaml (change 'rivka' to deploymenter's name)
 cd helm-charts/simple-web
 
 # Lint the chart
@@ -652,7 +652,7 @@ This implementation goes beyond basic requirements with:
    - Health checks
    - Resource management
 
-## 📝 Interview Talking Points
+## 📝 Key Talking Points
 
 ### Key Concepts to Explain
 
@@ -714,10 +714,10 @@ AKS Details:
 
 ## 📄 License
 
-This project is for interview purposes only.
+This project is for demonstration purposes only.
 
 ---
 
 **Created by**: [Your Name]  
 **Date**: January 2026  
-**Purpose**: DevOps Engineer Interview Task
+**Purpose**: DevOps Engineer Deployment Task
