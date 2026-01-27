@@ -3,7 +3,6 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "simple-web.fullname" . }}
-  namespace: {{ .Values.app.namespace }}
   labels:
     {{- include "simple-web.labels" . | nindent 4 }}
 spec:
