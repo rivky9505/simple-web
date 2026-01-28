@@ -556,6 +556,7 @@ kubelogin convert-kubeconfig -l msi
 
 ```bash
 # Get all resources
+
 kubectl get all -n YOUR_NAME
 
 # Check events
@@ -570,5 +571,3 @@ kubectl describe resourcequota -n YOUR_NAME
 # View pod logs (previous container)
 kubectl logs POD_NAME -n YOUR_NAME --previous
 ```
-**Purpose**: DevOps Engineer Deployment Task
-
